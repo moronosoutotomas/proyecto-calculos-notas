@@ -1,6 +1,6 @@
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-  <h1 class="h3 mb-0 text-gray-800"><?php echo $data['titulo']; ?></h1>
+    <h1 class="h3 mb-0 text-gray-800">Calcula notas</h1>
 </div>
 
 <!-- Row con la tabla -->
@@ -27,14 +27,14 @@
                       </thead>
 
                       <tbody>
-                      <?php foreach ($data['resultado'] as $asignatura => $alumnado) { ?>
+                      <?php foreach ($data['resultado'] as $asignatura => $datos) { ?>
                           <tr>
                               <td><?php echo ucwords($asignatura) ?></td>
-                              <td><?php echo (is_numeric($alumnado['media'])) ? number_format($alumnado['media'], 2, ',') : $alumnado['media']; ?></td>
-                              <td><?php echo $alumnado['suspensos'] ?></td>
-                              <td><?php echo $alumnado['aprobados'] ?></td>
-                              <td><?php echo $alumnado['max']['alumno'] ?>: <?php echo $alumnado['max']['nota'] ?></td>
-                              <td><?php echo $alumnado['min']['alumno'] ?>: <?php echo $alumnado['min']['nota'] ?></td>
+                              <td><?php echo $datos['media']; ?></td>
+                              <td><?php echo $datos['aprobados'] ?></td>
+                              <td><?php echo $datos['suspensos'] ?></td>
+                              <td><?php echo $datos['max']['alumno'] ?>: <?php echo $datos['max']['nota'] ?></td>
+                              <td><?php echo $datos['min']['alumno'] ?>: <?php echo $datos['min']['nota'] ?></td>
                           </tr>
                         <?php
                       }
