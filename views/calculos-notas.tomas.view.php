@@ -33,7 +33,8 @@
                               <td><?php echo $datos['media']; ?></td>
                               <td><?php echo $datos['aprobados'] ?></td>
                               <td><?php echo $datos['suspensos'] ?></td>
-                              <td><?php echo $datos['max']['alumno'] ?>: <?php echo $datos['max']['nota'] ?></td>
+                              <td><?php echo $datos['max']['alumno'] ?>
+                                  : <?php echo number_format($datos['max']['nota'], 2, ',') ?></td>
                               <td><?php echo $datos['min']['alumno'] ?>: <?php echo $datos['min']['nota'] ?></td>
                           </tr>
                         <?php
@@ -53,41 +54,18 @@
 <!-- Row con listado de aprobados, con alguna suspensa y con los que no promocionan -->
 <div class="row">
   <?php
-  if (isset($data['resultado'])) {
+  if (isset($data['listados'])) {
     ?>
-      <div class="col-12">
-          <div class="card shadow mb-4">
-              <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Datos asignaturas</h6>
-              </div>
+
+      <div class="col-12 col-lg-6">
+          <div class="alert alert-success card shadow mb-4">
+              <h6 class="m-0 font-weight-bold">Aprobados</h6>
               <div class="card-body"> <!-- Card con los aprobados -->
-                  <ul class="list-group list-group-flush">
+                  <ul>
                     <?php
                     foreach ($data['listados']['apruebanTodo'] as $alumno) {
                       ?>
-                        <li class="list-group-item"><?php echo $alumno; ?></li>
-                      <?php
-                    }
-                    ?>
-                  </ul>
-              </div>
-              <div class="card-body"> <!-- Card con los que suspenden alguna -->
-                  <ul class="list-group list-group-flush">
-                    <?php
-                    foreach ($data['listados']['suspendenAlguna'] as $alumno) {
-                      ?>
-                        <li class="list-group-item"><?php echo $alumno; ?></li>
-                      <?php
-                    }
-                    ?>
-                  </ul>
-              </div>
-              <div class="card-body"> <!-- Card con los que no promocionan -->
-                  <ul class="list-group list-group-flush">
-                    <?php
-                    foreach ($data['listados']['noPromocionan'] as $alumno) {
-                      ?>
-                        <li class="list-group-item"><?php echo $alumno; ?></li>
+                        <li><?php echo $alumno; ?></li>
                       <?php
                     }
                     ?>
@@ -95,6 +73,43 @@
               </div>
           </div>
       </div>
+
+
+      <div class="col-12 col-lg-6">
+          <div class="alert alert-warning card shadow mb-4">
+              <h6 class="m-0 font-weight-bold">Suspenden alguna</h6>
+              <div class="card-body"> <!-- Card con los que suspenden alguna -->
+                  <ul>
+                    <?php
+                    foreach ($data['listados']['suspendenAlguna'] as $alumno) {
+                      ?>
+                        <li><?php echo $alumno; ?></li>
+                      <?php
+                    }
+                    ?>
+                  </ul>
+              </div>
+          </div>
+      </div>
+
+
+      <div class="col-12 col-lg-6">
+          <div class="alert alert-danger card shadow mb-4">
+              <h6 class="m-0 font-weight-bold">No promocionan</h6>
+              <div class="card-body"> <!-- Card con los que no promocionan -->
+                  <ul>
+                    <?php
+                    foreach ($data['listados']['noPromocionan'] as $alumno) {
+                      ?>
+                        <li><?php echo $alumno; ?></li>
+                      <?php
+                    }
+                    ?>
+                  </ul>
+              </div>
+          </div>
+      </div>
+
     <?php
   }
   ?>
