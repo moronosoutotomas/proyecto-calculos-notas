@@ -1,32 +1,33 @@
-<?php /** @noinspection PhpComposerExtensionStubsInspection */
+<?php
 declare(strict_types=1);
 
 $data = [];
 
-// Comprobamos envío
+// Comprobamos que hubo envío
 if (isset($_POST['enviar'])) {
 
   // Saneamos input
   $data['texto'] = filter_var($_POST['input'], FILTER_SANITIZE_SPECIAL_CHARS);
 
-  // Verificamos que no hay errores
+  // Verificamos que no hay errores en los datos recibidos por POST
   $errores = checkForm($_POST['input']);
-  if (count($errores) > 0) {
 
-    // Mostramos errores
+  if (count($errores) > 0) {
+    // Mostramos errores si los hay
     $data['errores'] = $errores;
   } else {
 
-    // Procesamos
+    // Procesamos la informaciçon recibida acumulando los retornos de cada función
+    // ya en su posición apropiada del set de resultados (y listados)
     $data['resultado'] = procesarTexto($_POST['input']);
     $data['listados'] = mostrarListado($data['resultado']);
   }
 }
 
 /**
- * Función de validación del formulario
- * @param string $datos array que contiene los datos ya saneados.
- * @return array array que contiene los errores.
+ * Función de validación del formulario.
+ * @param string $datos array que contiene los datos ya saneados, validados y sin errores.
+ * @return array array que contiene solamente los errores.
  */
 function checkForm(string $datos): array
 {
@@ -39,7 +40,7 @@ function checkForm(string $datos): array
       $errores['texto'][] = 'Error: introduzca un bloque en formato JSON válido';
     } else {
 
-      // iteración asignaturas
+      // Iteración sobre las asignaturas
       foreach ((array)$descodificado as $asignatura => $alumnado) {
         if ((!is_string($asignatura)) || (mb_strlen(trim($asignatura)) < 1)) {
           $errores['texto'][] = "Error: el formato de texto de la asignatura '$asignatura' no es válido";
@@ -48,13 +49,13 @@ function checkForm(string $datos): array
           $errores['texto'][] = "Error: cada asignatura debe contener un conjunto de alumnos ('$alumnado' no es un array)";
         } else {
 
-          // iteración alumnos
+          // Iteración sobre los alumnos
           foreach ($alumnado as $alumno => $boletinNotas) {
             if (!is_string($alumno) || (mb_strlen(trim($alumno)) < 1)) {
               $errores['texto'][] = "Error: el formato de texto del nombre del alumno '$alumno' no es válido";
             }
 
-            // iteración boletines de notas
+            // Iteración sobre los boletines de notas
             foreach ($boletinNotas as $nota) {
               if (!is_numeric($nota)) {
                 $errores['texto'][] = "Error: el formato numérico de la nota '$nota' de '$alumno' no es válido";
@@ -74,7 +75,7 @@ function checkForm(string $datos): array
 }
 
 /**
- * Función que procesa los datos y realiza los cálculos
+ * Función que procesa los datos y realiza los cálculos necesarios.
  * @param string $datos
  * @return array
  */
@@ -84,9 +85,10 @@ function procesarTexto(string $datos): array
   $resultado = [];
 
 
-  // iteración asignaturas
+  // Iteración sobre las asignaturas
   foreach ($descodificado as $asignatura => $alumnado) {
-    $mediaAsignatura = 0;
+    // Inicializamos las variables necesarias antes del bucle de alumnos
+    // para poder asignarles datos dentro y mostrarlos fuera.
     $sumaNotas = 0;
     $numAlumnos = 0;
     $suspensos = 0;
@@ -94,7 +96,7 @@ function procesarTexto(string $datos): array
     $max = ['alumno' => '', 'nota' => -1];
     $min = ['alumno' => '', 'nota' => 11];
 
-    // iteración alumnos
+    // Iteración sobre los alumnos
     foreach ($alumnado as $alumno => $boletinNotas) {
       $mediaAlumno = calcularMedia($boletinNotas);
       $resultado[$asignatura]['alumnos'][$alumno] = $mediaAlumno;
@@ -114,7 +116,7 @@ function procesarTexto(string $datos): array
       }
       $mediaAsignatura = ($numAlumnos > 0) ? $sumaNotas / $numAlumnos : -1;
 
-      // asignamos resultados por alumno
+      // Asignamos todos los resultados al array a devolver
       $resultado[$asignatura]['media'] = number_format($mediaAsignatura, 2, ',');
       $resultado[$asignatura]['aprobados'] = $aprobados;
       $resultado[$asignatura]['suspensos'] = $suspensos;
@@ -123,7 +125,6 @@ function procesarTexto(string $datos): array
     }
   } // foreach asignaturas
 
-//  var_dump($resultado);
   return $resultado;
 }
 
@@ -142,7 +143,7 @@ function mostrarListado(array $datos): array
 
   $alumnosAsignaturas = [];
 
-  // Primero, recopilamos la información de cada alumno en todas las asignaturas
+  // Recopilamos la información de cada alumno en todas las asignaturas
   foreach ($datos as $asignatura => $infoAsignatura) {
     foreach ($infoAsignatura['alumnos'] as $alumno => $nota) {
       if (!isset($alumnosAsignaturas[$alumno])) {
@@ -157,7 +158,7 @@ function mostrarListado(array $datos): array
     }
   }
 
-  // Ahora clasificamos a los alumnos según sus resultados
+  // Clasificamos a los alumnos según sus resultados
   foreach ($alumnosAsignaturas as $alumno => $info) {
     if ($info['suspensas'] == 0) {
       $listados['apruebanTodo'][] = $alumno;
@@ -177,7 +178,7 @@ function mostrarListado(array $datos): array
 }
 
 /**
- * Función que calcula la media de un array numérico dado comprobando antes si es numérico
+ * Función que calcula la media de un array numérico.
  * @param array $datos
  * @return float
  */
