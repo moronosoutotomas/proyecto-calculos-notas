@@ -50,7 +50,6 @@
   ?>
 </div>
 
-
 <!-- Row con listado de aprobados, con alguna suspensa y con los que no promocionan -->
 <div class="row">
   <?php
@@ -59,7 +58,7 @@
 
       <div class="col-12 col-lg-6">
           <div class="alert alert-success card shadow mb-4">
-              <h6 class="m-0 font-weight-bold">Aprobados</h6>
+              <h6 class="m-0 font-weight-bold">Aprueban todas</h6>
               <div class="card-body"> <!-- Card con los aprobados -->
                   <ul>
                     <?php
@@ -73,7 +72,6 @@
               </div>
           </div>
       </div>
-
 
       <div class="col-12 col-lg-6">
           <div class="alert alert-warning card shadow mb-4">
@@ -92,6 +90,22 @@
           </div>
       </div>
 
+      <div class="col-12 col-lg-6">
+          <div class="alert alert-primary card shadow mb-4">
+              <h6 class="m-0 font-weight-bold">Promocionan</h6>
+              <div class="card-body"> <!-- Card con los que suspenden alguna -->
+                  <ul>
+                    <?php
+                    foreach ($data['listados']['promocionan'] as $alumno) {
+                      ?>
+                        <li><?php echo $alumno; ?></li>
+                      <?php
+                    }
+                    ?>
+                  </ul>
+              </div>
+          </div>
+      </div>
 
       <div class="col-12 col-lg-6">
           <div class="alert alert-danger card shadow mb-4">
@@ -114,7 +128,6 @@
   }
   ?>
 </div>
-
 
 <!-- Row con el input -->
 <div class="row">
