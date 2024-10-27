@@ -35,7 +35,8 @@
                               <td><?php echo $datos['suspensos'] ?></td>
                               <td><?php echo $datos['max']['alumno'] ?>
                                   : <?php echo number_format($datos['max']['nota'], 2, ',') ?></td>
-                              <td><?php echo $datos['min']['alumno'] ?>: <?php echo $datos['min']['nota'] ?></td>
+                              <td><?php echo $datos['min']['alumno'] ?>
+                                  : <?php echo number_format($datos['min']['nota'], 2, ',') ?></td>
                           </tr>
                         <?php
                       }

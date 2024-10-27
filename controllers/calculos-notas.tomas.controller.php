@@ -137,7 +137,7 @@ function procesarTexto(array $datos): array
       $mediaAsignatura = ($numAlumnos > 0) ? $sumaNotas / $numAlumnos : -1;
 
       // Asignamos todos los resultados al array a devolver
-      $resultado[$asignatura]['media'] = number_format($mediaAsignatura, 2, ',');
+      $resultado[$asignatura]['media'] = number_format(round($mediaAsignatura, 1), 2, ',');
       $resultado[$asignatura]['aprobados'] = $aprobados;
       $resultado[$asignatura]['suspensos'] = $suspensos;
       $resultado[$asignatura]['max'] = $max;
@@ -167,11 +167,12 @@ function mostrarListado(array $datos): array
   // Recopilamos la información de cada alumno en todas las asignaturas
   foreach ($datos as $asignatura => $alumnado) {
     foreach ($alumnado as $alumno => $nota) {
+      $media = calcularMedia($nota);
       if (!isset($boletin[$alumno])) {
         $boletin[$alumno] = ['suspensas' => 0];
       }
 
-      if ($nota <= 5) {
+      if ($media <= 5) {
         $boletin[$alumno]['suspensas']++;
       }
     }
