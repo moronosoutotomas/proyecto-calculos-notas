@@ -17,11 +17,15 @@ if (isset($_POST['enviar'])) {
     $data['errores'] = $errores;
   } else {
 
-    // Procesamos la informaciçon recibida acumulando los retornos de cada función
-    // ya en su posición apropiada del set de resultados (y listados)
+    // Procesamos la información recibida acumulando los retornos de cada función
+    // ya en su posición apropiada del set de resultados (y listados).
     $data['resultado'] = procesarTexto($_POST['input']);
     $data['listados'] = mostrarListado($data['resultado']);
   }
+} elseif ($_POST['input'] == '') {
+  $data['errores']['texto'] = "Por favor, introduzca un bloque de texto en formato JSON";
+} else {
+  $data['errores']['texto'] = "Por favor, introduzca un bloque de texto en formato JSON";
 }
 
 /**
@@ -32,43 +36,56 @@ if (isset($_POST['enviar'])) {
 function checkForm(string $datos): array
 {
   $errores = [];
+
   if (empty($datos)) {
     $errores['texto'] = 'Error: este campo es obligatorio';
   } else {
+
     $descodificado = json_decode(trim($datos), true);
-    if (is_null($descodificado)) { // json_decode() devuelve nulos si no reconoce el formato
+
+    if (is_null($descodificado)) { // OJO! json_decode() devuelve nulos si no reconoce el formato
       $errores['texto'][] = 'Error: introduzca un bloque en formato JSON válido';
     } else {
 
-      // Iteración sobre las asignaturas
-      foreach ((array)$descodificado as $asignatura => $alumnado) {
-        if ((!is_string($asignatura)) || (mb_strlen(trim($asignatura)) < 1)) {
-          $errores['texto'][] = "Error: el formato de texto de la asignatura '$asignatura' no es válido";
-        }
-        if (!is_array($alumnado)) {
-          $errores['texto'][] = "Error: cada asignatura debe contener un conjunto de alumnos ('$alumnado' no es un array)";
+      if (!is_array($descodificado)) {
+        $errores['texto'][] = 'Error: el contenido del JSON debe ser un conjunto de asignaturas, alumnos y notas';
+      } else {
+
+        if (mb_strlen($datos) < 10) {
+          $errores['texto'][] = "Por favor, introduzca un bloque de texto en formato JSON";
         } else {
 
-          // Iteración sobre los alumnos
-          foreach ($alumnado as $alumno => $boletinNotas) {
-            if (!is_string($alumno) || (mb_strlen(trim($alumno)) < 1)) {
-              $errores['texto'][] = "Error: el formato de texto del nombre del alumno '$alumno' no es válido";
+          // Iteración sobre las asignaturas
+          foreach ((array)$descodificado as $asignatura => $alumnado) {
+            if ((!is_string($asignatura)) || (mb_strlen(trim($asignatura)) < 1)) {
+              $errores['texto'][] = "Error: el formato de texto de la asignatura '$asignatura' no es válido";
             }
+            if (!is_array($alumnado)) {
+              $errores['texto'][] = "Error: cada asignatura debe contener un conjunto de alumnos ('$alumnado' no es un array)";
+            } else {
 
-            // Iteración sobre los boletines de notas
-            foreach ($boletinNotas as $nota) {
-              if (!is_numeric($nota)) {
-                $errores['texto'][] = "Error: el formato numérico de la nota '$nota' de '$alumno' no es válido";
-              } else if ($nota > 10 || $nota < 0) {
-                $errores['texto'][] = "Error: la nota '$nota' del alumno '$alumno' no está comprendida entre 0-10";
-              }
-            }// foreach $nota
+              // Iteración sobre los alumnos
+              foreach ($alumnado as $alumno => $boletinNotas) {
+                if (!is_string($alumno) || (mb_strlen(trim($alumno)) < 1)) {
+                  $errores['texto'][] = "Error: el formato de texto del nombre del alumno '$alumno' no es válido";
+                }
 
-          } //foreach $alumnado
+                // Iteración sobre los boletines de notas
+                foreach ($boletinNotas as $nota) {
+                  if (!is_numeric($nota)) {
+                    $errores['texto'][] = "Error: el formato numérico de la nota '$nota' de '$alumno' no es válido";
+                  } else if ($nota > 10 || $nota < 0) {
+                    $errores['texto'][] = "Error: la nota '$nota' del alumno '$alumno' no está comprendida entre 0-10";
+                  }
+                }// foreach $nota
+
+              } //foreach $alumnado
+
+            }
+          } //foreach $asignaturas
 
         }
-      } //foreach $asignaturas
-
+      }
     }
   }
   return $errores;
