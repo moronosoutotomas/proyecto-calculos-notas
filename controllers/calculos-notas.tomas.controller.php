@@ -4,7 +4,7 @@ declare(strict_types=1);
 $data = [];
 
 // Comprobamos que hubo envío
-if (isset($_POST)) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST)) {
 
   // Saneamos input
   $data['texto'] = filter_var($_POST['input'], FILTER_SANITIZE_SPECIAL_CHARS);
